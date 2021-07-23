@@ -5,6 +5,7 @@
 #include "Demo_Client.h"
 #include "afxsock.h"
 #include <string>
+#include <fstream>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -37,31 +38,31 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 			// TODO: code your application's behavior here.
 			AfxSocketInit(NULL);
 			CSocket client;
-			string ip;
+			cout << "Nhap ip: ";
+			char ip[30];
+			cin.getline(ip, 30);
+			int port;
+			cout << "Nhap port: ";
+			cin >> port;
+			cin.ignore();
 			client.Create();
-			if (client.Connect(_T("192.168.1.172"), 4567))
+			if (client.Connect(CA2W(ip), port))
+			{
 				cout << "Ket noi thanh cong" << endl;
+				string s;
+				string clientName;
+				clientName = "Client: ";
+
+				do {
+					fflush(stdin);
+
+
+
+				} while (true);
+				client.Close();
+			}
 			else
 				cout << "Ket noi khong thanh cong" << endl;
-			string s;
-			string serverName;
-			serverName = "Client 2";
-			
-			do {
-				fflush(stdin); 
-				client.Send(&serverName, sizeof(serverName), 0);
-				client.Receive(&s, sizeof(s), 0);
-				cout << "Server: " << s << endl;
-				cout << "Client: ";
-				getline(cin, s);
-				if (s != "Thoat")
-				{
-					client.Send(&s, sizeof(s), 0);
-				}
-				else break;
-			}while(true);
-			client.Close();
-
 		}
 	}
 	else
