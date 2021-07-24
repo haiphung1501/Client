@@ -1,10 +1,8 @@
-// Demo_Client.cpp : Defines the entry point for the console application.
-//
-
 #include "stdafx.h"
 #include "Demo_Client.h"
 #include "afxsock.h"
 #include <string>
+#include <fstream>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -16,7 +14,21 @@
 CWinApp theApp;
 
 using namespace std;
+DWORD WINAPI function_cal(LPVOID arg) {
+	SOCKET* hConnected = (SOCKET*)arg;
+	CSocket mysock;
+	//Chuyen ve lai CSocket
+	mysock.Attach(*hConnected);
 
+
+	//Code
+	cout << "Hello";
+	//Code
+
+	delete hConnected;
+	mysock.Close();
+	return 0;
+}
 int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 {
 	int nRetCode = 0;
@@ -37,31 +49,29 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 			// TODO: code your application's behavior here.
 			AfxSocketInit(NULL);
 			CSocket client;
-			string ip;
+			DWORD threadID;
+			HANDLE threadStatus;
+
+			//cout << "Enter server's IP: ";
+			char ip[] = "127.0.0.1";
+			//cin.getline(ip, 30);
+			int port = 1234;
+			//cout << "Enter server's port: ";
+			//cin >> port;
+			//cin.ignore();
 			client.Create();
-			if (client.Connect(_T("192.168.1.172"), 4567))
-				cout << "Ket noi thanh cong" << endl;
+			if (client.Connect(CA2W(ip), port))
+			{
+				cout << "Succesfully Connected!" << endl;
+
+				SOCKET* hConnected = new SOCKET();
+				*hConnected = client.Detach();
+				threadStatus = CreateThread(NULL, 0, function_cal, hConnected, 0, &threadID);
+
+				client.Attach(*hConnected);
+			}
 			else
 				cout << "Ket noi khong thanh cong" << endl;
-			string s;
-			string serverName;
-			serverName = "Client 2";
-			
-			do {
-				fflush(stdin); 
-				client.Send(&serverName, sizeof(serverName), 0);
-				client.Receive(&s, sizeof(s), 0);
-				cout << "Server: " << s << endl;
-				cout << "Client: ";
-				getline(cin, s);
-				if (s != "Thoat")
-				{
-					client.Send(&s, sizeof(s), 0);
-				}
-				else break;
-			}while(true);
-			client.Close();
-
 		}
 	}
 	else
@@ -72,5 +82,4 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 	}
 
 	return nRetCode;
-	//TEST
 }
