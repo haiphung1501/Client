@@ -38,17 +38,17 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 			// TODO: code your application's behavior here.
 			AfxSocketInit(NULL);
 			CSocket client;
-			cout << "Nhap ip: ";
+			cout << "Enter server's IP: ";
 			char ip[30];
 			cin.getline(ip, 30);
 			int port;
-			cout << "Nhap port: ";
+			cout << "Enter server's port: ";
 			cin >> port;
 			cin.ignore();
 			client.Create();
 			if (client.Connect(CA2W(ip), port))
 			{
-				cout << "Ket noi thanh cong" << endl;
+				cout << "Succesfully Connected!" << endl;
 				string s;
 				string clientName;
 				clientName = "Client: ";
