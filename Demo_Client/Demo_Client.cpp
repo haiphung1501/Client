@@ -17,7 +17,21 @@
 CWinApp theApp;
 
 using namespace std;
+DWORD WINAPI function_cal(LPVOID arg) {
+	SOCKET* hConnected = (SOCKET*)arg;
+	CSocket mysock;
+	//Chuyen ve lai CSocket
+	mysock.Attach(*hConnected);
 
+
+	//Code
+	cout << "Hello";
+	//Code
+
+	delete hConnected;
+	mysock.Close();
+	return 0;
+}
 int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 {
 	int nRetCode = 0;
@@ -38,28 +52,26 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 			// TODO: code your application's behavior here.
 			AfxSocketInit(NULL);
 			CSocket client;
-			cout << "Nhap ip: ";
+			DWORD threadID;
+			HANDLE threadStatus;
+
+			cout << "Enter server's IP: ";
 			char ip[30];
 			cin.getline(ip, 30);
 			int port;
-			cout << "Nhap port: ";
+			cout << "Enter server's port: ";
 			cin >> port;
 			cin.ignore();
 			client.Create();
 			if (client.Connect(CA2W(ip), port))
 			{
-				cout << "Ket noi thanh cong" << endl;
-				string s;
-				string clientName;
-				clientName = "Client: ";
+				cout << "Succesfully Connected!" << endl;
+				
+				SOCKET* hConnected = new SOCKET();
+				*hConnected = client.Detach();
+				threadStatus = CreateThread(NULL, 0, function_cal, hConnected, 0, &threadID);
 
-				do {
-					fflush(stdin);
-
-
-
-				} while (true);
-				client.Close();
+				client.Attach(*hConnected);
 			}
 			else
 				cout << "Ket noi khong thanh cong" << endl;
