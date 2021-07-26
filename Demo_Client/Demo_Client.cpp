@@ -59,7 +59,7 @@ DWORD WINAPI function_cal1(LPVOID arg) {
 		fflush(stdin);
 		cout << "\n0. Exit" << endl;
 		cout << "1. Log in" << endl;
-		cout << "2. Sign in" << endl;
+		cout << "2. Sign up" << endl;
 		cout << "Your choice: " << endl;
 		cin >> choice;
 
@@ -81,7 +81,7 @@ DWORD WINAPI function_cal1(LPVOID arg) {
 				cout << "Error";
 			}
 		}
-		if (choice == 2) {
+		else if (choice == 2) {
 				string user, pass;
 				int check;
 				cout << "Enter Username: ";
@@ -95,14 +95,17 @@ DWORD WINAPI function_cal1(LPVOID arg) {
 
 				client.Receive(&check, sizeof(check), 0);
 				if (check == 1) {
-					cout << "Sign in Successful";
+					cout << "Sign up Successful";
 				}
 				else {
 					cout << "Username has been used";
 				}
 		}
-		if (choice == 0) {
+		else if (choice == 0) {
 			number_continue = 0;
+		} 
+		else {
+			continue;
 		}
 	} while (number_continue);
 
