@@ -140,7 +140,7 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 				}
 			}
 			else
-				cout << "Ket noi khong thanh cong" << endl;
+				cout << "Failed to connect!" << endl;
 		}
 	}
 	else
