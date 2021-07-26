@@ -104,7 +104,6 @@ DWORD WINAPI function_cal1(LPVOID arg) {
 		if (choice == 0) {
 			number_continue = 0;
 		}
-		getchar();
 	} while (number_continue);
 
 	//Code
