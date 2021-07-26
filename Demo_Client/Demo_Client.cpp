@@ -52,35 +52,59 @@ DWORD WINAPI function_cal1(LPVOID arg) {
 	CSocket client;
 	//Chuyen ve lai CSocket
 	client.Attach(*hConnected);
-	int number_continue = 0;
+	int number_continue = 1;
+	int choice;
 	char letter;
 	do {
 		fflush(stdin);
-		int number_a, number_b, number_result;
-		char letter;
-		printf("Nhap vao phep toan (+, -): ");
-		scanf("%c", &letter);
+		cout << "\n0. Exit" << endl;
+		cout << "1. Log in" << endl;
+		cout << "2. Sign in" << endl;
+		cout << "Your choice: " << endl;
+		cin >> choice;
 
-		printf("Nhap vao so thu nhat: ");
-		scanf("%d", &number_a);
+		client.Send(&choice, sizeof(choice), 0);
 
-		printf("Nhap vao so thu hai: ");
-		scanf("%d", &number_b);
+		if (choice == 1) {
+			string user, pass;
+			int check;
+			cin.ignore();
+			login(user, pass);
+			client.Send(&user, sizeof(user), 0);
+			client.Send(&pass, sizeof(pass), 0);
 
-		//Gui phep toan den server
-		client.Send(&letter, sizeof(letter), 0);
-		//Gui so thu nhat den server
-		client.Send(&number_a, sizeof(number_a), 0);
-		//Gui so thu hai den server
-		client.Send(&number_b, sizeof(number_b), 0);
+			client.Receive(&check, sizeof(check), 0);
+			if (check == 1) {
+				cout << "Login Successful";
+			}
+			else {
+				cout << "Error";
+			}
+		}
+		if (choice == 2) {
+				string user, pass;
+				int check;
+				cout << "Enter Username: ";
+				cin.ignore();
+				getline(cin, user);
+				cout << "Enter Password: ";
+				getline(cin, pass);
 
-		//Nhan ket qua tinh toan tu server
-		client.Receive(&number_result, sizeof(number_result), 0);
-		printf("Ket qua phep toan %d %c %d=%d\n", number_a, letter, number_b, number_result);
+				client.Send(&user, sizeof(user), 0);
+				client.Send(&pass, sizeof(pass), 0);
 
-		printf("Nhap 1 de tiep tuc, 0 de thoat: ");
-		scanf("%d", &number_continue);
-		client.Send(&number_continue, sizeof(number_continue), 0);
+				client.Receive(&check, sizeof(check), 0);
+				if (check == 1) {
+					cout << "Sign in Successful";
+				}
+				else {
+					cout << "Username has been used";
+				}
+		}
+		if (choice == 0) {
+			number_continue = 0;
+		}
+		getchar();
 	} while (number_continue);
 
 	//Code
