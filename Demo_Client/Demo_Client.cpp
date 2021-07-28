@@ -53,8 +53,7 @@ DWORD WINAPI function_cal1(LPVOID arg) {
 	//Chuyen ve lai CSocket
 	client.Attach(*hConnected);
 	int number_continue = 1;
-	int choice;
-	char letter;
+	int choice, check;
 	do {
 		fflush(stdin);
 		cout << "\n0. Exit" << endl;
@@ -67,7 +66,6 @@ DWORD WINAPI function_cal1(LPVOID arg) {
 
 		if (choice == 1) {
 			string user, pass;
-			int check;
 			cin.ignore();
 			login(user, pass);
 			client.Send(&user, sizeof(user), 0);
@@ -76,6 +74,7 @@ DWORD WINAPI function_cal1(LPVOID arg) {
 			client.Receive(&check, sizeof(check), 0);
 			if (check == 1) {
 				cout << "Login Successful";
+				number_continue = 0;
 			}
 			else {
 				cout << "Error";
@@ -83,7 +82,6 @@ DWORD WINAPI function_cal1(LPVOID arg) {
 		}
 		else if (choice == 2) {
 				string user, pass;
-				int check;
 				cout << "Enter Username: ";
 				cin.ignore();
 				getline(cin, user);
@@ -109,6 +107,20 @@ DWORD WINAPI function_cal1(LPVOID arg) {
 		}
 	} while (number_continue);
 
+	if (check == 1) {
+		int choice = INT_MIN;
+		number_continue = 1;
+		do {
+			system("CLS");
+			cout << "Hello Client\n";
+			cout << "============\n";
+			cout << "0. Exit\n";
+			cout << "1. Check Currency Prices\n";
+			cout << "2. Check Cryptocurrency Prices\n";
+			cout << "3. Currency Converter\n";
+			cin >> choice;
+		} while (number_continue);
+	}
 	//Code
 	cout << "Goi duoc Function Client";
 	//Code
@@ -149,7 +161,6 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 			//cin.ignore();
 			client.Create();
 			int number_continue = 0;
-			char letter;
 			if (client.Connect(CA2W(ip), port)) {
 				cout << "Succesfully Connected!" << endl;
 
