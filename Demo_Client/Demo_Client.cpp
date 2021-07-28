@@ -111,6 +111,9 @@ DWORD WINAPI function_cal1(LPVOID arg)
 	string dateString, typeString;
 	double buy, sell;
 	do {
+		if (choice == 0)
+			break;
+		else choice == INT_MIN;
 		system("CLS");
 		cout << "0. Exit\n";
 		cout << "1. Check currency rate based on website\n";
@@ -201,7 +204,7 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 			CSocket client;
 			DWORD threadID;
 			HANDLE threadStatus;
-
+			client.Create();
 			//cout << "Enter server's IP: ";
 			char ip[] = "127.0.0.1";
 			//cin.getline(ip, 30);
@@ -209,9 +212,7 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 			//cout << "Enter server's port: ";
 			//cin >> port;
 			//cin.ignore();
-			client.Create();
 			int number_continue = 0;
-			char letter;
 			if (client.Connect(CA2W(ip), port)) {
 				cout << "Succesfully Connected!" << endl;
 
@@ -222,9 +223,25 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 				client.Attach(*hConnected);
 
 				while (1) {
+					//check if thread still running
 					DWORD dwWait = WaitForSingleObject(threadStatus, 0); // timeout right away if thread handle is not signalled
 					if (dwWait == WAIT_OBJECT_0)
 						exit(0);
+					else if (dwWait == WAIT_TIMEOUT) // still running
+					{
+						string stop_sign;
+						client.Receive(&stop_sign, sizeof(stop_sign), 0);
+						if (stop_sign == "stop") {
+							TerminateThread(threadStatus, threadID);
+							//closeHandle(threadStatus);
+
+							client.Close();
+
+							cout << endl << endl << "SERVER STOP WORKING !";
+							_getch();
+							return 0;
+						}
+					}
 				}
 			}
 			else
@@ -237,6 +254,5 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 		_tprintf(_T("Fatal Error: GetModuleHandle failed\n"));
 		nRetCode = 1;
 	}
-
 	return nRetCode;
 }
