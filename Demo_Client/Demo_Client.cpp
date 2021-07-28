@@ -47,13 +47,18 @@ void login(string& user, string& pass) {
 	pass = passwordInput(30);
 }
 
-DWORD WINAPI function_cal1(LPVOID arg) {
+DWORD WINAPI function_cal1(LPVOID arg)
+{
 	SOCKET* hConnected = (SOCKET*)arg;
 	CSocket client;
 	//Chuyen ve lai CSocket
 	client.Attach(*hConnected);
 	int number_continue = 1;
-	int choice, check;
+	int choice;
+	char letter;
+	string user, pass;
+	int check;
+	bool loginCheck = 0;
 	do {
 		fflush(stdin);
 		cout << "\n0. Exit" << endl;
@@ -61,66 +66,111 @@ DWORD WINAPI function_cal1(LPVOID arg) {
 		cout << "2. Sign up" << endl;
 		cout << "Your choice: " << endl;
 		cin >> choice;
-
+		cin.ignore();
 		client.Send(&choice, sizeof(choice), 0);
 
 		if (choice == 1) {
-			string user, pass;
-			cin.ignore();
 			login(user, pass);
 			client.Send(&user, sizeof(user), 0);
 			client.Send(&pass, sizeof(pass), 0);
 
 			client.Receive(&check, sizeof(check), 0);
 			if (check == 1) {
-				cout << "Login Successful";
-				number_continue = 0;
+				cout << "Login Successful" << endl;
+				loginCheck = 1;
 			}
 			else {
-				cout << "Error";
+				cout << "Error" << endl;
 			}
 		}
-		else if (choice == 2) {
-				string user, pass;
-				cout << "Enter Username: ";
-				cin.ignore();
-				getline(cin, user);
-				cout << "Enter Password: ";
-				getline(cin, pass);
+		if (choice == 2) {
+			cout << "Enter Username: ";
+			getline(cin, user);
+			cout << "Enter Password: ";
+			getline(cin, pass);
 
-				client.Send(&user, sizeof(user), 0);
-				client.Send(&pass, sizeof(pass), 0);
+			client.Send(&user, sizeof(user), 0);
+			client.Send(&pass, sizeof(pass), 0);
 
-				client.Receive(&check, sizeof(check), 0);
-				if (check == 1) {
-					cout << "Sign up Successful";
-				}
-				else {
-					cout << "Username has been used";
-				}
+			client.Receive(&check, sizeof(check), 0);
+			if (check == 1) {
+				cout << "Sign in Successful" << endl;
+			}
+			else {
+				cout << "Username has been used" << endl;
+			}
 		}
-		else if (choice == 0) {
+		if (loginCheck)
 			number_continue = 0;
-		} 
-		else {
-			continue;
+		if (choice == 0) {
+			number_continue = 0;
 		}
 	} while (number_continue);
+	number_continue = 1;
+	int type;
+	string dateString, typeString;
+	double buy, sell;
+	do {
+		system("CLS");
+		cout << "0. Exit\n";
+		cout << "1. Check currency rate based on website\n";
+		cout << "2. Check currency rate based on server data\n";
+		cout << "3. Currency Converter\n";
+		cin >> choice;
+		cin.ignore();
+		client.Send(&choice, sizeof(choice), 0);
 
-	if (check == 1) {
-		int choice = INT_MIN;
-		number_continue = 1;
-		do {
-			system("CLS");
-			cout << "Hello Client\n";
-			cout << "============\n";
-			cout << "0. Exit\n";
-			cout << "1. Check Currency Prices\n";
-			cout << "2. Check Cryptocurrency Prices\n";
-			cout << "3. Currency Converter\n";
+		if (choice == 0)
+			number_continue = 0;
+		if (choice == 1) {
+			cout << "0.Back\n";
+			cout << "1. AUD\n";
+			cout << "2. CAD\n";
+			cout << "3. CHF\n";
+			cout << "4. EUR\n";
+			cout << "5.GBP\n";
+			cout << "6.JPY\n";
+			cout << "7.USD\n";
 			cin >> choice;
-		} while (number_continue);
-	}
+			cin.ignore();
+			client.Send(&choice, sizeof(type, 0));
+			if (choice != 0) {
+				client.Receive(&typeString, sizeof(typeString), 0);
+				client.Receive(&sell, sizeof(sell), 0);
+				client.Receive(&buy, sizeof(buy), 0);
+				cout << typeString << " buy:" << buy << " sell: " << sell << endl;
+				_getch();
+			}
+			else
+				continue;
+		}
+		if (choice == 2) {
+			cout << "0. Back" << endl;
+			cout << "1. USD" << endl;
+			cout << "2. EUR" << endl;
+			cout << "3. YEN" << endl;
+			cin >> type;
+			cin.ignore();
+			//gui du lieu nhap vao
+			client.Send(&type, sizeof(type), 0);
+			if (type != 0)
+			{
+				cout << "Enter date: (Format dd/mm/yyyy)";
+				getline(cin, dateString);
+				client.Send(&dateString, sizeof(dateString), 0);
+				client.Receive(&typeString, sizeof(typeString), 0);
+				client.Receive(&sell, sizeof(sell), 0);
+				cout << typeString << " = " << sell << " VND" << endl;
+				_getch();
+			}
+			else {
+				continue;
+			}
+		}
+		if (choice == 3) {
+
+		}
+	} while (number_continue);
 	//Code
 	cout << "Goi duoc Function Client";
 	//Code
@@ -161,6 +211,7 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 			//cin.ignore();
 			client.Create();
 			int number_continue = 0;
+			char letter;
 			if (client.Connect(CA2W(ip), port)) {
 				cout << "Succesfully Connected!" << endl;
 
