@@ -47,49 +47,101 @@ void login(string& user, string& pass) {
 	pass = passwordInput(30);
 }
 
-DWORD WINAPI function_cal1(LPVOID arg) {
+DWORD WINAPI function_cal1(LPVOID arg) 
+{
 	SOCKET* hConnected = (SOCKET*)arg;
 	CSocket client;
 	//Chuyen ve lai CSocket
 	client.Attach(*hConnected);
-	int number_continue = 0;
+	int number_continue = 1;
+	int choice;
 	char letter;
+	string user, pass;
+	int check;
+	bool loginCheck = 0;
 	do {
 		fflush(stdin);
-		int number_a, number_b, number_result;
-		char letter;
-		printf("Nhap vao phep toan (+, -): ");
-		scanf("%c", &letter);
+		cout << "\n0. Exit" << endl;
+		cout << "1. Log in" << endl;
+		cout << "2. Sign in" << endl;
+		cout << "Your choice: " << endl;
+		cin >> choice;
+		cin.ignore();
+		client.Send(&choice, sizeof(choice), 0);
 
-		printf("Nhap vao so thu nhat: ");
-		scanf("%d", &number_a);
+		if (choice == 1) {
+			login(user, pass);
+			client.Send(&user, sizeof(user), 0);
+			client.Send(&pass, sizeof(pass), 0);
 
-		printf("Nhap vao so thu hai: ");
-		scanf("%d", &number_b);
+			client.Receive(&check, sizeof(check), 0);
+			if (check == 1) {
+				cout << "Login Successful" << endl;
+				loginCheck = 1;
+			}
+			else {
+				cout << "Error" << endl;
+			}
+		}
+		if (choice == 2) {
+			cout << "Enter Username: ";
+			getline(cin, user);
+			cout << "Enter Password: ";
+			getline(cin, pass);
 
-		//Gui phep toan den server
-		client.Send(&letter, sizeof(letter), 0);
-		//Gui so thu nhat den server
-		client.Send(&number_a, sizeof(number_a), 0);
-		//Gui so thu hai den server
-		client.Send(&number_b, sizeof(number_b), 0);
+			client.Send(&user, sizeof(user), 0);
+			client.Send(&pass, sizeof(pass), 0);
 
-		//Nhan ket qua tinh toan tu server
-		client.Receive(&number_result, sizeof(number_result), 0);
-		printf("Ket qua phep toan %d %c %d=%d\n", number_a, letter, number_b, number_result);
-
-		printf("Nhap 1 de tiep tuc, 0 de thoat: ");
-		scanf("%d", &number_continue);
-		client.Send(&number_continue, sizeof(number_continue), 0);
+			client.Receive(&check, sizeof(check), 0);
+			if (check == 1) {
+				cout << "Sign in Successful" << endl;
+			}
+			else {
+				cout << "Username has been used" << endl;
+			}
+		}
+		if (loginCheck)
+			number_continue = 0;
+		if (choice == 0) {
+			number_continue = 0;
+		}
 	} while (number_continue);
+	number_continue = 1;
+	int type;
+	string dateString;
+	double amount;
+	string typeString;
+	do {
+		cout << "0. Exit" << endl;
+		cout << "1. USD" << endl;
+		cout << "2. EUR" << endl;
+		cout << "3. YEN" << endl;
+		cin >> type;
+		cin.ignore();
+		//gui du lieu nhap vao
+		client.Send(&type, sizeof(type), 0);
+		if (type != 0)
+		{
+			cout << "Enter date: ";
+			getline(cin, dateString);
+			client.Send(&dateString, sizeof(dateString), 0);
+			client.Receive(&typeString, sizeof(typeString), 0);
+			client.Receive(&amount, sizeof(amount), 0);
+			cout << typeString << " = " << amount << " VND" << endl;
+		}
+		else
+			number_continue = 0;
 
-	//Code
-	cout << "Goi duoc Function Client";
-	//Code
+		//nhan du lieu tu server
+			
+	}while (number_continue);
+		//Code
+		cout << "Goi duoc Function Client";
+		//Code
 
-	delete hConnected;
-	client.Close();
-	return 0;
+		delete hConnected;
+		client.Close();
+		return 0;
 }
 int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 {
@@ -140,7 +192,7 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 				}
 			}
 			else
-				cout << "Failed to connect!" << endl;
+				cout << "Ket noi khong thanh cong" << endl;
 		}
 	}
 	else
