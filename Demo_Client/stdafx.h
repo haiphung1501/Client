@@ -26,7 +26,16 @@
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
 #include <iostream>
+#include <string>
+#include <fstream>
+#include <windows.h>
+#include <conio.h>
+#include <iomanip>
 
 using namespace std;
 
 // TODO: reference additional headers your program requires here
+void textcolor(int x);
+void gotoxy(int x, int y);
+void login(string& user, string& pass);
+string passwordInput(unsigned maxLength);

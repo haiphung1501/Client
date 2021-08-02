@@ -1,10 +1,7 @@
 #include "stdafx.h"
 #include "Demo_Client.h"
 #include "afxsock.h"
-#include <string>
-#include <fstream>
-#include <windows.h>
-#include <conio.h>
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -16,36 +13,8 @@
 CWinApp theApp;
 using namespace std;
 
-string passwordInput(unsigned maxLength)
-{
-	string pw;
-	for (char c; (c = _getch()); )
-	{
-		if (c == '\n' || c == '\r') { //Enter
-			cout << "\n";
-			break;
-		}
-		else if (c == '\b') { // Backspace
-			cout << "\b \b";
-			if (!pw.empty()) pw.erase(pw.size() - 1);
-		}
-		else if (c == -32) { //up down right left
-			_getch();
-		}
-		else if (isprint(c) && pw.size() < maxLength) {
-			std::cout << '*';
-			pw += c;
-		}
-	}
-	return pw;
-}
-void login(string& user, string& pass) {
-	cout << "Enter Username:";
-	getline(cin, user, '\n');
 
-	cout << "Enter password:";
-	pass = passwordInput(30);
-}
+
 
 DWORD WINAPI function_cal1(LPVOID arg)
 {
@@ -61,12 +30,24 @@ DWORD WINAPI function_cal1(LPVOID arg)
 	bool loginCheck = 0;
 	do {
 		fflush(stdin);
-		cout << "\n0. Exit" << endl;
-		cout << "1. Log in" << endl;
-		cout << "2. Sign up" << endl;
-		cout << "Your choice: " << endl;
+		system("cls");
+		textcolor(243);
+		gotoxy(48, 9);
+		cout << ' ' << setw(15) << ' ';
+		gotoxy(48, 10);
+		cout << "  0. Exit"  << setw(7) << ' ' << endl;
+		gotoxy(48, 11);
+		cout << "  1. Log in" << setw(5) << ' ' << endl;
+		gotoxy(48, 12);
+		cout << "  2. Sign up" << setw(4) << ' ' << endl;
+		gotoxy(48, 13);
+		cout << "  Your choice:" << "  ";
+		gotoxy(48, 14);
+		cout << ' ' << setw(15) << ' ';
+		gotoxy(62, 13);
 		cin >> choice;
 		cin.ignore();
+		textcolor(7);
 		client.Send(&choice, sizeof(choice), 0);
 
 		if (choice == 1) {
@@ -76,29 +57,56 @@ DWORD WINAPI function_cal1(LPVOID arg)
 
 			client.Receive(&check, sizeof(check), 0);
 			if (check == 1) {
-				cout << "Login Successful" << endl;
+				gotoxy(48, 14);
+				textcolor(242);
+				cout << "  Login Successful  " << endl;
+				textcolor(7);
 				loginCheck = 1;
+				Sleep(1000);
 			}
 			else {
-				cout << "Error" << endl;
+				gotoxy(48, 14);
+				textcolor(244);
+				cout << "  Error         " << endl;
+				Sleep(1000);
+				textcolor(7);
 			}
 		}
 		if (choice == 2) {
-			cout << "Enter Username: ";
+			system("cls");
+			textcolor(243);
+			gotoxy(48, 9);
+			cout << ' ' << setw(19) << ' ';
+			gotoxy(48, 10);
+			cout << "  Enter Username:   ";
+			gotoxy(48, 11);
+			cout << ' ' << setw(19) << ' ';
+			gotoxy(50, 11);
 			getline(cin, user);
-			cout << "Enter Password: ";
+			gotoxy(48, 12);
+			cout << "  Enter password:   ";
+			gotoxy(48, 13);
+			cout << ' ' << setw(19) << ' ';
+			gotoxy(50, 13);
 			getline(cin, pass);
-
+			textcolor(7);
 			client.Send(&user, sizeof(user), 0);
 			client.Send(&pass, sizeof(pass), 0);
 
 			client.Receive(&check, sizeof(check), 0);
 			if (check == 1) {
-				cout << "Sign in Successful" << endl;
+				gotoxy(48, 14);
+				textcolor(242);
+				cout << "Sign up Successful  " << endl;
+				textcolor(7);
 			}
 			else {
+				gotoxy(48, 14);
+				textcolor(244);
 				cout << "Username has been used" << endl;
+				textcolor(7);
 			}
+			Sleep(1000);
 		}
 		if (loginCheck)
 			number_continue = 0;
@@ -112,59 +120,124 @@ DWORD WINAPI function_cal1(LPVOID arg)
 	double buy, sell;
 	do {
 		if (choice == 0)
-			break;
+			number_continue = 0;
 		else choice == INT_MIN;
-		system("CLS");
-		cout << "0. Exit\n";
-		cout << "1. Check currency rate based on website\n";
-		cout << "2. Check currency rate based on server data\n";
-		cout << "3. Currency Converter\n";
+		system("cls");
+		textcolor(243);
+		gotoxy(48, 9);
+		cout << ' ' << setw(45) << ' ';
+		gotoxy(48, 10);
+		cout << "  0. Exit" << setw(37) << ' ';
+		gotoxy(48, 11);
+		cout << "  1. Check currency rate based on website" << setw(5) << ' ';;
+		gotoxy(48, 12);
+		cout << "  2. Check currency rate based on server data" << ' ';;
+		gotoxy(48, 13);
+		cout << "  3. Currency Converter" << setw(23) << ' ';
+		gotoxy(48, 14);
+		cout << "  Choice: " << setw(36) << ' ';
+		gotoxy(60, 14);
 		cin >> choice;
+		textcolor(7);
 		cin.ignore();
 		client.Send(&choice, sizeof(choice), 0);
 
 		if (choice == 0)
 			number_continue = 0;
 		if (choice == 1) {
-			cout << "0.Back\n";
-			cout << "1. AUD\n";
-			cout << "2. CAD\n";
-			cout << "3. CHF\n";
-			cout << "4. EUR\n";
-			cout << "5.GBP\n";
-			cout << "6.JPY\n";
-			cout << "7.USD\n";
+			system("cls");
+			textcolor(243);
+			gotoxy(48, 9);
+			cout << ' ' << setw(12) << ' ';
+			gotoxy(48, 10);
+			cout << "  0.Back" << setw(5) << ' ';
+			gotoxy(48, 11);
+			cout << "  1. AUD" << setw(5) << ' ';
+			gotoxy(48, 12);
+			cout << "  2. CAD" << setw(5) << ' ';
+			gotoxy(48, 13);
+			cout << "  3. CHF" << setw(5) << ' ';
+			gotoxy(48, 14);
+			cout << "  4. EUR" << setw(5) << ' ';
+			gotoxy(48, 15);
+			cout << "  5. GBP" << setw(5) << ' ';
+			gotoxy(48, 16);
+			cout << "  6. JPY" << setw(5) << ' ';
+			gotoxy(48, 17);
+			cout << "  7. USD" << setw(5) << ' ';
+			gotoxy(48, 18);
+			cout << "  Choice: " << setw(3) << ' ';
+			gotoxy(58, 18);
 			cin >> choice;
+			textcolor(7);
 			cin.ignore();
 			client.Send(&choice, sizeof(type, 0));
 			if (choice != 0) {
+				system("cls");
 				client.Receive(&typeString, sizeof(typeString), 0);
 				client.Receive(&sell, sizeof(sell), 0);
 				client.Receive(&buy, sizeof(buy), 0);
-				cout << typeString << " buy:" << buy << " sell: " << sell << endl;
-				_getch();
+				textcolor(243);
+				gotoxy(48, 9);
+				cout << ' ' << setw(12) << ' ';
+				gotoxy(48, 10);
+				cout << "  Type: " << typeString << "  ";
+				gotoxy(48, 11);
+				cout << "  Buy: " << buy << " ";
+				gotoxy(48, 12);
+				cout << "  Sell: " << sell << " ";
+				gotoxy(48, 13);
+				system("pause");
+				textcolor(7);
 			}
 			else
 				continue;
 		}
 		if (choice == 2) {
-			cout << "0. Back" << endl;
-			cout << "1. USD" << endl;
-			cout << "2. EUR" << endl;
-			cout << "3. YEN" << endl;
+			system("cls");
+			textcolor(243);
+			gotoxy(48, 9);
+			cout << ' ' << setw(12) << ' ';
+			gotoxy(48, 10);
+			cout << "  0.Back" << setw(5) << ' ';
+			gotoxy(48, 11);
+			cout << "  1. USD" << setw(5) << ' ';
+			gotoxy(48, 12);
+			cout << "  2. EUR" << setw(5) << ' ';
+			gotoxy(48, 13);
+			cout << "  3. YEN" << setw(5) << ' ';
+			gotoxy(48, 14);
+			cout << "  Choice: " << setw(3) << ' ';
+			gotoxy(58, 14);
 			cin >> type;
+			textcolor(7);
 			cin.ignore();
 			//gui du lieu nhap vao
 			client.Send(&type, sizeof(type), 0);
 			if (type != 0)
 			{
-				cout << "Enter date: (Format dd/mm/yyyy)";
+				system("cls");
+				textcolor(243);
+				gotoxy(48, 9);
+				cout << ' ' << setw(32) << ' ';
+				gotoxy(48, 10);
+				cout << "  Enter date: (Format dd/mm/yyyy)";
+				gotoxy(48, 11);
+				cout << ' ' << setw(32) << ' ';
+				gotoxy(50, 11);
 				getline(cin, dateString);
 				client.Send(&dateString, sizeof(dateString), 0);
 				client.Receive(&typeString, sizeof(typeString), 0);
 				client.Receive(&sell, sizeof(sell), 0);
-				cout << typeString << " = " << sell << " VND" << endl;
-				_getch();
+				gotoxy(48, 12);
+				cout << ' ' << setw(32) << ' ';
+				gotoxy(48, 13);
+				cout << ' ' << setw(32) << ' ';
+				gotoxy(48, 13);
+				cout << "  " << typeString << " = " << sell << " VND" << endl;
+				gotoxy(48, 14);
+				system("pause");
+				textcolor(7);
 			}
 			else {
 				continue;
@@ -221,27 +294,30 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 				threadStatus = CreateThread(NULL, 0, function_cal1, hConnected, 0, &threadID);
 
 				client.Attach(*hConnected);
-
+				string stop_sign;
 				while (1) {
 					//check if thread still running
 					DWORD dwWait = WaitForSingleObject(threadStatus, 0); // timeout right away if thread handle is not signalled
 					if (dwWait == WAIT_OBJECT_0)
-						exit(0);
-					else if (dwWait == WAIT_TIMEOUT) // still running
 					{
-						string stop_sign;
+						exit(0);
 						client.Receive(&stop_sign, sizeof(stop_sign), 0);
-						if (stop_sign == "stop") {
-							TerminateThread(threadStatus, threadID);
-							//closeHandle(threadStatus);
-
-							client.Close();
-
-							cout << endl << endl << "SERVER STOP WORKING !";
-							_getch();
-							return 0;
-						}
 					}
+						
+					//else if (dwWait == WAIT_TIMEOUT) // still running
+					//{
+					//	client.Receive(&stop_sign, sizeof(stop_sign), 0);
+					//	if (stop_sign == "stop") {
+					//		TerminateThread(threadStatus, threadID);
+					//		//closeHandle(threadStatus);
+
+					//		client.Close();
+
+					//		cout << endl << endl << "SERVER STOP WORKING !";
+					//		_getch();
+					//		return 0;
+					//	}
+					//}
 				}
 			}
 			else
