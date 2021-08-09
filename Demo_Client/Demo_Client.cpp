@@ -30,6 +30,7 @@ DWORD WINAPI function_cal1(LPVOID arg)
 	do {
 		fflush(stdin);
 		system("cls");
+		Logo();
 		textcolor(243);
 		gotoxy(48, 9);
 		cout << ' ' << setw(15) << ' ';
@@ -73,6 +74,7 @@ DWORD WINAPI function_cal1(LPVOID arg)
 		}
 		else if (choice == 2) {
 			system("cls");
+			Logo();
 			textcolor(243);
 			gotoxy(48, 9);
 			cout << ' ' << setw(19) << ' ';
@@ -121,6 +123,7 @@ DWORD WINAPI function_cal1(LPVOID arg)
 		do {
 			fflush(stdin);
 			system("cls");
+			Logo();
 			textcolor(243);
 			gotoxy(48, 9);
 			cout << ' ' << setw(45) << ' ';
@@ -141,9 +144,10 @@ DWORD WINAPI function_cal1(LPVOID arg)
 			client.Send(&choice_dummy, sizeof(choice_dummy), 0);
 
 			if (choice_dummy == 0)
-				break;
+				exit(0);
 			else if (choice_dummy == 1) {
 				system("cls");
+				Logo();
 				textcolor(243);
 				gotoxy(48, 9);
 				cout << ' ' << setw(12) << ' ';
@@ -193,6 +197,7 @@ DWORD WINAPI function_cal1(LPVOID arg)
 			}
 			else if (choice_dummy == 2) {
 				system("cls");
+				Logo();
 				textcolor(243);
 				gotoxy(48, 9);
 				cout << ' ' << setw(12) << ' ';
@@ -219,7 +224,7 @@ DWORD WINAPI function_cal1(LPVOID arg)
 					gotoxy(48, 9);
 					cout << ' ' << setw(32) << ' ';
 					gotoxy(48, 10);
-					cout << "  Enter date: (Format dd/mm/yyyy)";
+					cout << "  Enter date: (Format dd/mm/yyyy) (18/01/2021 -> 26/07/2021)";
 					gotoxy(48, 11);
 					cout << ' ' << setw(32) << ' ';
 					gotoxy(50, 11);
@@ -254,6 +259,7 @@ DWORD WINAPI function_cal1(LPVOID arg)
 }
 int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 {
+	Logo();
 	int nRetCode = 0;
 
 	HMODULE hModule = ::GetModuleHandle(NULL);
@@ -276,12 +282,12 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 			HANDLE threadStatus;
 			client.Create();
 			cout << "Enter server's IP: ";
-			char ip[] = "127.0.0.1";
+			char ip[30];
 			cin.getline(ip, 30);
 			int port;
 			cout << "Enter server's port: ";
 			cin >> port;
-			cin.ignore();
+			//cin.ignore();
 			int number_continue = 0;
 			if (client.Connect(CA2W(ip), port)) {
 				cout << "Succesfully Connected!" << endl;
@@ -318,7 +324,7 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 				}
 			}
 			else
-				cout << "Ket noi khong thanh cong" << endl;
+				cout << "Cannot Connect to Server." << endl;
 		}
 	}
 	else

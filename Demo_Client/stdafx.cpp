@@ -14,6 +14,24 @@ void textcolor(int x)
 	SetConsoleTextAttribute(mau, x);
 }
 
+void Logo() {
+	ifstream ifs("logo.txt");
+	if (ifs.fail()) {
+		cout << "Fail to open logo File !!!";
+		return;
+	}
+	while (!ifs.eof()) {
+		textcolor(10);
+		string ch;
+		getline(ifs, ch);
+		if (ch.length() <= 5)
+			continue;
+		cout << ch << endl;
+	}
+	textcolor(7);
+	ifs.close();
+}
+
 void gotoxy(int x, int y)
 {
 	HANDLE hConsoleOutput;
@@ -49,6 +67,7 @@ string passwordInput(unsigned maxLength)
 void login(string& user, string& pass)
 {
 	system("cls");
+	Logo();
 	textcolor(243);
 	gotoxy(48, 9);
 	cout << ' ' << setw(19) << ' ';

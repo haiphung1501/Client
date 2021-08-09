@@ -36,6 +36,7 @@ using namespace std;
 
 // TODO: reference additional headers your program requires here
 void textcolor(int x);
+void Logo();
 void gotoxy(int x, int y);
 void login(string& user, string& pass);
 string passwordInput(unsigned maxLength);
