@@ -35,7 +35,7 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Demo_Client.cpp">
+    <ClCompile Include="Final_Client.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
